@@ -84,8 +84,8 @@ def render_waybill_xls_from_template(waybill: Waybill) -> bytes:
             _set(sheet, row, 96, driver.personnel_no)
             _set(sheet, row, 111, driver.license_no or "")
             _set(sheet, row, 124, "")
-        _set(sheet, 17, 57, "")
-        _set(sheet, 19, 57, "")
+        _set(sheet, 17, 57, f"СНИЛС: {driver.snils}")
+        _set(sheet, 19, 57, f"СНИЛС: {driver.snils}")
 
         # Route and trip assignment.
         _set(sheet, 22, 58, route_name)

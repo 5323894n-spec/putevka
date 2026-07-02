@@ -434,6 +434,7 @@ function Drivers({ drivers, onCreate }: { drivers: Driver[]; onCreate: () => voi
         { title: "Табельный", dataIndex: "personnel_no" },
         { title: "Кат.", dataIndex: "license_category" },
         { title: "ВУ", dataIndex: "license_no" },
+        { title: "СНИЛС", dataIndex: "snils" },
         { title: "ВУ до", dataIndex: "license_valid_until" },
         { title: "Медсправка до", dataIndex: "medical_valid_until" },
         { title: "Колонна", dataIndex: "column" },
@@ -465,6 +466,9 @@ function Drivers({ drivers, onCreate }: { drivers: Driver[]; onCreate: () => voi
             <Col span={8}><Form.Item name="license_category" label="Категория"><Input /></Form.Item></Col>
             <Col span={16}><Form.Item name="license_no" label="Номер водительского удостоверения"><Input /></Form.Item></Col>
           </Row>
+          <Form.Item name="snils" label="СНИЛС" rules={[{ required: true, message: "Укажите СНИЛС" }]}>
+            <Input placeholder="000-000-000 00" />
+          </Form.Item>
           <Row gutter={12}>
             <Col span={12}><Form.Item name="license_valid_until" label="ВУ действует до"><DatePicker className="wide" /></Form.Item></Col>
             <Col span={12}><Form.Item name="medical_valid_until" label="Медсправка до"><DatePicker className="wide" /></Form.Item></Col>
@@ -631,6 +635,7 @@ function PrintableWaybill({ waybill }: { waybill: Waybill }) {
         <Descriptions.Item label="Водитель">{waybill.driver.full_name}</Descriptions.Item>
         <Descriptions.Item label="Табельный">{waybill.driver.personnel_no}</Descriptions.Item>
         <Descriptions.Item label="Водительское удостоверение">{waybill.driver.license_no}</Descriptions.Item>
+        <Descriptions.Item label="СНИЛС">{waybill.driver.snils}</Descriptions.Item>
         <Descriptions.Item label="Маршрут">{waybill.route.number} {waybill.route.name}</Descriptions.Item>
         <Descriptions.Item label="Выпуск">{waybill.run.number}</Descriptions.Item>
         <Descriptions.Item label="Выезд">{waybill.planned_out_time}</Descriptions.Item>

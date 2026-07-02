@@ -13,6 +13,7 @@ class DriverIn(BaseModel):
     license_category: str | None = None
     license_no: str | None = None
     license_valid_until: date | None = None
+    snils: str
     medical_certificate: str | None = None
     medical_valid_until: date | None = None
     column: str | None = None

@@ -95,6 +95,7 @@ def single_waybill_workbook(waybill: Waybill) -> bytes:
         ("Водитель", waybill.driver.full_name),
         ("Табельный номер", waybill.driver.personnel_no),
         ("Водительское удостоверение", waybill.driver.license_no or ""),
+        ("СНИЛС", waybill.driver.snils),
         ("Маршрут", f"{waybill.route.number} {waybill.route.name}"),
         ("Выпуск", waybill.run.number),
         ("Время выезда", waybill.planned_out_time.strftime("%H:%M")),
@@ -120,4 +121,3 @@ def single_waybill_workbook(waybill: Waybill) -> bytes:
     ws.column_dimensions["A"].width = 28
     ws.column_dimensions["B"].width = 64
     return workbook_response_bytes(wb)
-

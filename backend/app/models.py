@@ -60,6 +60,7 @@ class Driver(Base):
     license_category: Mapped[str | None] = mapped_column(String(32))
     license_no: Mapped[str | None] = mapped_column(String(64))
     license_valid_until: Mapped[date | None] = mapped_column(Date)
+    snils: Mapped[str] = mapped_column(String(32), default="")
     medical_certificate: Mapped[str | None] = mapped_column(String(128))
     medical_valid_until: Mapped[date | None] = mapped_column(Date)
     column: Mapped[str | None] = mapped_column(String(32))

@@ -2,7 +2,7 @@ from datetime import date, time
 
 from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, select
+from sqlalchemy import func, inspect, select, text
 from sqlalchemy.orm import Session, joinedload
 
 from .database import Base, engine, get_db
@@ -14,6 +14,14 @@ from .template_export import render_waybill_xls_from_template
 
 
 Base.metadata.create_all(bind=engine)
+
+
+def ensure_schema() -> None:
+    inspector = inspect(engine)
+    driver_columns = {column["name"] for column in inspector.get_columns("drivers")}
+    if "snils" not in driver_columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE drivers ADD COLUMN snils VARCHAR(32) DEFAULT '' NOT NULL"))
 
 app = FastAPI(title="Путевые листы пассажирского транспорта", version="0.1.0")
 app.add_middleware(
@@ -34,6 +42,7 @@ def seed(db: Session) -> None:
         license_category="D",
         license_no="99 15 571371",
         license_valid_until=date(2028, 2, 14),
+        snils="141-672-104 33",
         medical_certificate="МС-001",
         medical_valid_until=date(2027, 7, 2),
         column="АК3",
@@ -63,6 +72,7 @@ def seed(db: Session) -> None:
 
 @app.on_event("startup")
 def startup() -> None:
+    ensure_schema()
     with next(get_db()) as db:
         seed(db)
 
@@ -87,6 +97,8 @@ def list_drivers(db: Session = Depends(get_db)):
 
 @app.post("/drivers", response_model=DriverOut)
 def create_driver(payload: DriverIn, db: Session = Depends(get_db)):
+    if not payload.snils.strip():
+        raise HTTPException(status_code=422, detail="СНИЛС является обязательным реквизитом водителя")
     return create_entity(db, Driver, payload)
 
 

@@ -6,6 +6,7 @@ export type Driver = {
   license_category?: string;
   license_no?: string;
   license_valid_until?: string;
+  snils: string;
   medical_valid_until?: string;
   column?: string;
   status: string;
