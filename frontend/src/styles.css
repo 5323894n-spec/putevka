@@ -1,0 +1,109 @@
+body {
+  margin: 0;
+  background: #f4f6f8;
+  color: #1f2933;
+}
+
+.shell {
+  min-height: 100vh;
+}
+
+.side {
+  background: #ffffff !important;
+  border-right: 1px solid #dde3ea;
+}
+
+.brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.topbar {
+  height: 64px;
+  padding: 0 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #dde3ea;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.content {
+  padding: 18px;
+}
+
+.wide {
+  width: 100%;
+}
+
+.alert + .alert {
+  margin-top: 8px;
+}
+
+.print-form {
+  background: #ffffff;
+  padding: 8px;
+}
+
+.stamp {
+  width: 220px;
+  min-height: 72px;
+  border: 1px dashed #8c9bab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #66788a;
+  font-size: 13px;
+}
+
+.signatures {
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-form,
+  .print-form * {
+    visibility: visible;
+  }
+
+  .print-form {
+    position: fixed;
+    inset: 0;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 760px) {
+  .side {
+    display: none;
+  }
+
+  .topbar {
+    height: auto;
+    min-height: 64px;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .content {
+    padding: 12px;
+  }
+
+  .signatures {
+    grid-template-columns: 1fr;
+  }
+}
+
