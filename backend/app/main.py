@@ -10,6 +10,7 @@ from .exports import duties_workbook, single_waybill_workbook, waybills_workbook
 from .models import Driver, Duty, Route, Run, ScheduleEntry, Vehicle, Waybill, WaybillStatus
 from .schemas import DriverIn, DriverOut, DutyIn, DutyOut, RouteIn, RouteOut, RunIn, RunOut, ScheduleEntryIn, ScheduleEntryOut, VehicleIn, VehicleOut, WarningOut, WaybillCloseIn, WaybillOut
 from .services import build_warnings, close_waybill, create_waybill_from_duty
+from .template_export import render_waybill_xls_from_template
 
 
 Base.metadata.create_all(bind=engine)
@@ -307,3 +308,26 @@ def export_waybill(waybill_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Путевой лист не найден")
     content = single_waybill_workbook(waybill)
     return Response(content, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", headers={"Content-Disposition": f"attachment; filename={waybill.number}.xlsx"})
+
+
+@app.get("/exports/waybills/{waybill_id}/template.xls")
+def export_waybill_template(waybill_id: int, db: Session = Depends(get_db)):
+    waybill = db.scalar(
+        select(Waybill)
+        .options(joinedload(Waybill.duty), joinedload(Waybill.driver), joinedload(Waybill.vehicle), joinedload(Waybill.route), joinedload(Waybill.run))
+        .where(Waybill.id == waybill_id)
+    )
+    if not waybill:
+        raise HTTPException(status_code=404, detail="Путевой лист не найден")
+    try:
+        content = render_waybill_xls_from_template(waybill)
+    except FileNotFoundError:
+        raise HTTPException(status_code=500, detail="Шаблон путевого листа не найден")
+    except RuntimeError:
+        raise HTTPException(status_code=500, detail="Для точного .xls-шаблона нужен Microsoft Excel и pywin32 на сервере")
+    safe_name = waybill.number.replace("/", "_").replace("\\", "_")
+    return Response(
+        content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={safe_name}.xls"},
+    )

@@ -337,7 +337,7 @@ function Waybills({ waybills, loading, onPrint, onClose }: { waybills: Waybill[]
         { title: "Пробег", dataIndex: "mileage" },
         { title: "Топливо", render: (_, item) => `${item.fuel_out} → ${item.fuel_in}` },
         { title: "Статус", render: (_, item) => <Tag color={statusColor(item.status)}>{item.status}</Tag> },
-        { title: "", render: (_, item) => <Space><Button icon={<PrinterOutlined />} onClick={() => onPrint(item)} /><Button disabled={item.status === "закрыт"} onClick={() => onClose(item)}>Закрыть</Button></Space> },
+        { title: "", render: (_, item) => <Space><Button icon={<PrinterOutlined />} onClick={() => onPrint(item)} /><Button href={api.exportUrl(`/exports/waybills/${item.id}/template.xls`)}>Шаблон XLS</Button><Button disabled={item.status === "закрыт"} onClick={() => onClose(item)}>Закрыть</Button></Space> },
       ]} />
     </Card>
   );
