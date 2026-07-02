@@ -16,6 +16,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   drivers: () => request<Driver[]>("/drivers"),
   createDriver: (payload: unknown) => request<Driver>("/drivers", { method: "POST", body: JSON.stringify(payload) }),
+  deleteDriver: (id: number) => request<{ status: string }>(`/drivers/${id}`, { method: "DELETE" }),
   vehicles: () => request<Vehicle[]>("/vehicles"),
   createVehicle: (payload: unknown) => request<Vehicle>("/vehicles", { method: "POST", body: JSON.stringify(payload) }),
   routes: () => request<Route[]>("/routes"),

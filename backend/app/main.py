@@ -2,7 +2,7 @@ from datetime import date, time
 
 from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from .database import Base, engine, get_db
@@ -87,6 +87,23 @@ def list_drivers(db: Session = Depends(get_db)):
 @app.post("/drivers", response_model=DriverOut)
 def create_driver(payload: DriverIn, db: Session = Depends(get_db)):
     return create_entity(db, Driver, payload)
+
+
+@app.delete("/drivers/{driver_id}")
+def delete_driver(driver_id: int, db: Session = Depends(get_db)):
+    driver = db.get(Driver, driver_id)
+    if not driver:
+        raise HTTPException(status_code=404, detail="Водитель не найден")
+    linked_count = (
+        db.scalar(select(func.count(Duty.id)).where(Duty.driver_id == driver_id))
+        + db.scalar(select(func.count(ScheduleEntry.id)).where(ScheduleEntry.driver_id == driver_id))
+        + db.scalar(select(func.count(Waybill.id)).where(Waybill.driver_id == driver_id))
+    )
+    if linked_count:
+        raise HTTPException(status_code=409, detail="Нельзя удалить водителя: он уже используется в графике, наряде или путевых листах")
+    db.delete(driver)
+    db.commit()
+    return {"status": "deleted"}
 
 
 @app.get("/vehicles", response_model=list[VehicleOut])

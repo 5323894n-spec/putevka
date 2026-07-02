@@ -417,6 +417,16 @@ function Drivers({ drivers, onCreate }: { drivers: Driver[]; onCreate: () => voi
     onCreate();
   }
 
+  async function remove(driver: Driver) {
+    try {
+      await api.deleteDriver(driver.id);
+      message.success("Водитель удален");
+      onCreate();
+    } catch {
+      message.error("Не удалось удалить водителя: он может использоваться в графике, наряде или путевых листах");
+    }
+  }
+
   return (
     <Card title="Водители" extra={<Button onClick={() => setOpen(true)}>Добавить водителя</Button>}>
       <Table rowKey="id" dataSource={drivers} columns={[
@@ -428,6 +438,21 @@ function Drivers({ drivers, onCreate }: { drivers: Driver[]; onCreate: () => voi
         { title: "Медсправка до", dataIndex: "medical_valid_until" },
         { title: "Колонна", dataIndex: "column" },
         { title: "Статус", dataIndex: "status" },
+        {
+          title: "",
+          render: (_, item) => (
+            <Button danger onClick={() => Modal.confirm({
+              title: "Удалить водителя?",
+              content: `${item.full_name} (${item.personnel_no})`,
+              okText: "Удалить",
+              okButtonProps: { danger: true },
+              cancelText: "Отмена",
+              onOk: () => remove(item),
+            })}>
+              Удалить
+            </Button>
+          ),
+        },
       ]} />
       <Modal title="Новый водитель" open={open} onCancel={() => setOpen(false)} onOk={form.submit} okText="Сохранить">
         <Form form={form} layout="vertical" onFinish={submit} initialValues={{ license_category: "D", status: "работает" }}>
