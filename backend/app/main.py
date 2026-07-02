@@ -336,7 +336,7 @@ def export_waybill_template(waybill_id: int, db: Session = Depends(get_db)):
     except FileNotFoundError:
         raise HTTPException(status_code=500, detail="Шаблон путевого листа не найден")
     except RuntimeError:
-        raise HTTPException(status_code=500, detail="Для точного .xls-шаблона нужен Microsoft Excel и pywin32 на сервере")
+        raise HTTPException(status_code=500, detail="Для .xls-шаблона нужны зависимости xlrd/xlwt/xlutils или Microsoft Excel на Windows")
     safe_name = waybill.number.replace("/", "_").replace("\\", "_")
     return Response(
         content,
